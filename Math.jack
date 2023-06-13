@@ -1,0 +1,125 @@
+class Math {
+    static Array twoToThe;
+
+    function void init() {
+        var int i;
+        let i = 1;
+        let twoToThe = Array.new(16);
+        let twoToThe[0] = 1;
+        while (i < 16) {
+            let twoToThe[i] = twoToThe[i-1] + twoToThe[i-1];
+            let i = i + 1;
+        }
+        return;
+    }
+
+    function int abs(int x) {
+        if (x < 0) {
+            return -x;
+        } else {
+            return x;
+        }
+    }
+
+    function int multiply(int x, int y) {
+        var int j, sum, shiftedX;
+        let j = 0;
+        let sum = 0;
+        let shiftedX = x;
+        while (j < 16) {
+            if (Math.bit(y, j)) {
+                let sum = sum + shiftedX;
+            }
+            let shiftedX = shiftedX + shiftedX;
+            let j = j + 1;
+        }
+        return sum;
+    }
+
+    function int divide(int x, int y) {
+        var int x_abs, y_abs, j, q, r;
+        var Array shiftedY;
+        if (y = 0) {
+            do Sys.error(3);
+        }
+        let x_abs = Math.abs(x);
+        let y_abs = Math.abs(y);
+        if (y_abs > x_abs) {
+            return 0;
+        }
+        let j = 1;
+        let shiftedY = Array.new(16);
+        let shiftedY[0] = y_abs;
+        while ((shiftedY[j-1] + shiftedY[j-1] > 0) & (shiftedY[j-1] + shiftedY[j-1] < x_abs)) {
+            let shiftedY[j] = shiftedY[j-1] + shiftedY[j-1];
+            let j = j + 1;
+        }
+        let q = 0;
+        let r = x_abs;
+        while (j > 0) {
+            let j = j - 1;
+            if (~(r < shiftedY[j])) {
+                let q = q + q + 1;
+                let r = r - shiftedY[j];
+            } else {
+                let q = q + q;
+            }
+        }
+        /*
+        let shiftedY = y_abs + y_abs;
+        let q = Math.divide(x_abs, shiftedY);
+        if (x_abs - (2 * q * y_abs) < y_abs) {
+            let q = q + q;
+        } else {
+            let q = q + q + 1;
+        }
+        */
+        if ((x > 0) = (y > 0)) {
+            return q;
+        } else {
+            return -q;
+        }
+    }
+
+    function int min(int x, int y) {
+        if (x < y) {
+            return x;
+        } else {
+            return y;
+        }
+    }
+
+    function int max(int x, int y) {
+        if (x > y) {
+            return x;
+        } else {
+            return y;
+        }
+    }
+
+    function int sqrt(int x) {
+        var int y, j, yp2j, yp2j2;
+        if (x < 0) {
+            do Sys.error(4);
+        }
+        let y = 0;
+        let j = 7;
+        while (~(j < 0)) {
+            let yp2j = y + twoToThe[j];
+            let yp2j2 = yp2j * yp2j;
+            if (~(yp2j2 > x) & (yp2j2 > 0)) {
+                let y = yp2j;
+            }
+            let j = j - 1;
+        }
+        return y;
+    }
+
+    function boolean bit(int x, int j) {
+        if ((x & twoToThe[j]) = 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
