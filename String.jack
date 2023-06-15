@@ -17,18 +17,23 @@ class String {
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int maxLength) {
-        if (~(maxLength > 0)) {
+        if (maxLength < 0) {
             do Sys.error(14);
         }
         let actualLen = 0;
         let maxLen = maxLength;
-        let chars = Array.new(maxLength);
+        if (maxLen > 0) {
+            let chars = Array.new(maxLen);
+        }
         return this;
     }
 
     /** Disposes this string. */
     method void dispose() {
-        chars.dispose();
+        if (~(chars = null)) {
+            do chars.dispose();
+        }
+        return;
     }
 
     /** Returns the current length of this string. */
@@ -50,6 +55,7 @@ class String {
             do Sys.error(16);
         }
         let chars[j] = c;
+        return;
     }
 
     /** Appends c to this string's end and returns this string. */
@@ -69,32 +75,71 @@ class String {
         }
         let actualLen = actualLen - 1;
         let chars[actualLen] = 0;
-        return this;
+        return;
     }
 
-    function String int2String(int n) {
-        var int lastDigit;
-        var char c;
-        let lastDigit = n - (10 * (n / 10));
+    method String int2String(int n) {
+        var int nAbs, lastDigit;
+        var int c;
+        let nAbs = Math.abs(n);
+        let lastDigit = nAbs - (10 * (nAbs / 10));
         let c = lastDigit + 48;
-        if (n < 10) {
-            return ;
-
+        if (nAbs < 10) {
+            if (n < 0) {
+                do appendChar(45);
+            }
+        } else {
+            do int2String(n/10);
+        }
+        return appendChar(c);
+    }
 
     /** Returns the integer value of this string, 
      *  until a non-digit character is detected. */
     method int intValue() {
+        var int v, d, i;
+        var boolean isNeg;
+        let v = 0;
+        let i = 0;
+        if (charAt(i) = 45) {
+            let isNeg = true;
+            let i = i + 1;
+        }
+        while (i < length()) {
+            let d = charAt(i) - 48;
+            if (d < 0 | d > 9) {
+                let i = length();
+            } else {
+                let v = v * 10 + d;
+                let i = i + 1;
+            }
+        }
+        if (isNeg) {
+            return -v;
+        } else {
+            return v;
+        }
     }
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
-        var int lastDigit;
-        var char c;
-        let lastDigit = n - (10 * (n / 10));
-        let c = lastDigit + 48;
-        if (n < 10) {
-            return ;
+        var int valLen, n, j;
 
+        let valLen = 0;
+        if (val < 0) {
+            let valLen = valLen + 1;
+        }
+        let n = Math.abs(val);
+        while (n > 0) {
+            let n = n / 10;
+            let valLen = valLen + 1;
+        }
+        if (valLen > maxLen) {
+            do Sys.error(19);
+        }
+        let actualLen = 0;
+        do int2String(val);
+        return;
     }
 
     /** Returns the new line character. */
