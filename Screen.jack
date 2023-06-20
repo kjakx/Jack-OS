@@ -41,16 +41,44 @@ class Screen {
         return (x < 0) | (x > 511) | (y < 0) | (y > 255);
     }
 
+    function int pixel2Addr(int x, int y) {
+        var int j, y32, x_16, x_1616;
+        let y32 = y;
+        let j = 0;
+        while (j < 5) {
+            let y32 = y32 + y32;
+            let j = j + 1;
+        }
+        let x_16 = x / 16;
+        /*
+        let x_1616 = x_16;
+        let j = 0;
+        while (j < 4) {
+            let x_1616 = x_1616 + x_1616;
+            let j = j + 1;
+        }
+        */
+        return 16384 + y32 + x_16;
+    }
+
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
         var int addr, mask, j, xMod16, prev, next;
+        var int i, y32, x_16;
         if (Screen.isOutOfScreen(x, y)) {
             do Sys.error(7);
         }
-        let addr = 16384 + (y * 32) + (x / 16);
+        let y32 = y;
+        let i = 0;
+        while (i < 5) {
+            let y32 = y32 + y32;
+            let i = i + 1;
+        }
+        let x_16 = x / 16;
+        let addr = 16384 + y32 + x_16;
         let mask = 1;
         let j = 0;
-        let xMod16 = x - (16 * (x / 16));
+        let xMod16 = x - (16 * x_16);
         while (j < xMod16) {
             let mask = mask + mask;
             let j = j + 1;
@@ -133,14 +161,52 @@ class Screen {
 
     function void drawHLine(int x1, int x2, int y) {
         var int tmp;
+        var int addrStart, addrEnd, addr;
+        var int j, mask, xMod16;
+        var int lineStart, lineEnd, line;
         if (x1 > x2) {
             let tmp = x1;
             let x1 = x2;
             let x2 = tmp;
         }
+        /*
         while (~(x1 > x2)) {
             do Screen.drawPixel(x1, y);
             let x1 = x1 + 1;
+        }
+        */
+        let addrStart = Screen.pixel2Addr(x1, y);
+        let xMod16 = x1 - (16 * (x1 / 16));
+        let mask = 1;
+        let j = 0;
+        while (j < xMod16) {
+            let mask = mask + mask;
+            let j = j + 1;
+        }
+        if (color) {
+            let lineStart = Memory.peek(addrStart) | ~(mask - 1);
+        } else {
+            let lineStart = Memory.peek(addrStart) & (mask - 1);
+        }
+        do Memory.poke(addrStart, lineStart);
+        let addrEnd = Screen.pixel2Addr(x2, y);
+        let xMod16 = x2 - (16 * (x2 / 16));
+        let mask = 1;
+        let j = 0;
+        while (j < xMod16) {
+            let mask = mask + mask;
+            let j = j + 1;
+        }
+        if (color) {
+            let lineEnd = Memory.peek(addrEnd) | (mask | (mask - 1));
+        } else {
+            let lineEnd = Memory.peek(addrEnd) & ~(mask | (mask - 1));
+        }
+        do Memory.poke(addrEnd, lineEnd);
+        let addr = addrStart + 1;
+        while (addr < addrEnd) {
+            do Memory.poke(addr, color);
+            let addr = addr + 1;
         }
         return;
     }
@@ -166,7 +232,7 @@ class Screen {
         if (Screen.isOutOfScreen(x1, y1) | Screen.isOutOfScreen(x2, y2)) {
             do Sys.error(9);
         }
-        if (x1 > x2) {
+        if (y1 > y2) {
             let tmp = x1;
             let x1 = x2;
             let x2 = tmp;
@@ -174,9 +240,9 @@ class Screen {
             let y1 = y2;
             let y2 = tmp;
         }
-        while (~(x1 > x2)) {
-            do Screen.drawVLine(x1, y1, y2);
-            let x1 = x1 + 1;
+        while (~(y1 > y2)) {
+            do Screen.drawHLine(x1, x2, y1);
+            let y1 = y1 + 1;
         }
         return;
     }
