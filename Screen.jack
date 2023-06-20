@@ -15,6 +15,7 @@ class Screen {
     /** Initializes the Screen. */
     function void init() {
         let color = true;
+        do Screen.clearScreen();
         return;
     }
 
@@ -88,7 +89,7 @@ class Screen {
         while (~(a > dxAbs) & ~(b > dyAbs)) {
             if ((dx > 0) & (dy > 0)) {
                 do Screen.drawPixel(x1 + a, y1 + b);
-                if (~(adyMinusbdx > 0)) {
+                if (adyMinusbdx < 0) {
                     let a = a + 1;
                     let adyMinusbdx = adyMinusbdx + dy;
                 } else {
@@ -98,7 +99,7 @@ class Screen {
             }
             if ((dx > 0) & (dy < 0)) {
                 do Screen.drawPixel(x1 + a, y1 - b);
-                if (~(adyMinusbdx > 0)) {
+                if (adyMinusbdx < 0) {
                     let a = a + 1;
                     let adyMinusbdx = adyMinusbdx - dy;
                 } else {
@@ -108,7 +109,7 @@ class Screen {
             }
             if ((dx < 0) & (dy > 0)) {
                 do Screen.drawPixel(x1 - a, y1 + b);
-                if (~(adyMinusbdx > 0)) {
+                if (adyMinusbdx < 0) {
                     let a = a + 1;
                     let adyMinusbdx = adyMinusbdx + dy;
                 } else {
@@ -118,7 +119,7 @@ class Screen {
             }
             if ((dx < 0) & (dy < 0)) {
                 do Screen.drawPixel(x1 - a, y1 - b);
-                if (~(adyMinusbdx > 0)) {
+                if (adyMinusbdx < 0) {
                     let a = a + 1;
                     let adyMinusbdx = adyMinusbdx - dy;
                 } else {

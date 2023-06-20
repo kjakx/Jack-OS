@@ -1,6 +1,16 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+
+/**
+ * A library of commonly used mathematical functions.
+ * Note: Jack compilers implement multiplication and division using OS method calls.
+ */
 class Math {
     static Array twoToThe;
 
+    /** Initializes the library. */
     function void init() {
         var int i;
         let i = 1;
@@ -13,6 +23,7 @@ class Math {
         return;
     }
 
+    /** Returns the absolute value of x. */
     function int abs(int x) {
         if (x < 0) {
             return -x;
@@ -21,6 +32,11 @@ class Math {
         }
     }
 
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x*y and multiply(x,y) return the same value.
+     */
     function int multiply(int x, int y) {
         var int j, sum, shiftedX;
         let j = 0;
@@ -36,6 +52,11 @@ class Math {
         return sum;
     }
 
+    /** Returns the integer part of x/y.
+     *  When a Jack compiler detects the multiplication operator '/' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x/y and divide(x,y) return the same value.
+     */
     function int divide(int x, int y) {
         var int x_abs, y_abs, j, q, r;
         var Array shiftedY;
@@ -65,15 +86,6 @@ class Math {
                 let q = q + q;
             }
         }
-        /*
-        let shiftedY = y_abs + y_abs;
-        let q = Math.divide(x_abs, shiftedY);
-        if (x_abs - (2 * q * y_abs) < y_abs) {
-            let q = q + q;
-        } else {
-            let q = q + q + 1;
-        }
-        */
         if ((x > 0) = (y > 0)) {
             return q;
         } else {
@@ -81,22 +93,7 @@ class Math {
         }
     }
 
-    function int min(int x, int y) {
-        if (x < y) {
-            return x;
-        } else {
-            return y;
-        }
-    }
-
-    function int max(int x, int y) {
-        if (x > y) {
-            return x;
-        } else {
-            return y;
-        }
-    }
-
+    /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
         var int y, j, yp2j, yp2j2;
         if (x < 0) {
@@ -115,6 +112,24 @@ class Math {
         return y;
     }
 
+    /** Returns the greater number. */
+    function int max(int a, int b) {
+        if (a > b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+
+    /** Returns the smaller number. */
+    function int min(int a, int b) {
+        if (a < b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+    
     function boolean bit(int x, int j) {
         if ((x & twoToThe[j]) = 0) {
             return false;
