@@ -46,6 +46,7 @@ class Keyboard {
     function char readChar() {
         var char key, c;
         let key = 0;
+        do Output.printChar(0); // カーソルの表示
         while (key = 0) {
             let key = Keyboard.keyPressed();
         }
@@ -53,7 +54,10 @@ class Keyboard {
         while (~(key = 0)) {
             let key = Keyboard.keyPressed();
         }
-        do Output.printChar(c);
+        if (~(c = String.backSpace())) {
+            do Output.backSpace(); // カーソルを消す
+            do Output.printChar(c); // 文字を表示
+        }
         return c;
     }
 
@@ -74,7 +78,11 @@ class Keyboard {
                 return s;
             }
             if (c = String.backSpace()) {
-                do s.eraseLastChar();
+                do Output.backSpace(); // カーソルを消す
+                if (s.length() > 0) {
+                    do s.eraseLastChar();
+                    do Output.backSpace(); // 文字を消す
+                }
             } else {
                 do s.appendChar(c);
             }
