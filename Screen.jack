@@ -11,10 +11,19 @@
  */
 class Screen {
     static boolean color;
+    static Array twoToThe;
 
     /** Initializes the Screen. */
     function void init() {
+        var int i;
         let color = true;
+        let twoToThe = Array.new(16);
+        let i = 1;
+        let twoToThe[0] = 1;
+        while (i < 16) {
+            let twoToThe[i] = twoToThe[i-1] + twoToThe[i-1];
+            let i = i + 1;
+        }
         do Screen.clearScreen();
         return;
     }
@@ -47,24 +56,17 @@ class Screen {
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
-        var int addr, mask, j, xMod16, prev, next;
-        var int i, y32, x_16;
+        var int addr, xMod16, prev, next;
         if (Screen.isOutOfScreen(x, y)) {
             do Sys.error(7);
         }
         let addr = Screen.pixel2Addr(x, y);
-        let mask = 1;
-        let j = 0;
         let xMod16 = x - (16 * (x / 16));
-        while (j < xMod16) {
-            let mask = mask + mask;
-            let j = j + 1;
-        }
         let prev = Memory.peek(addr);
         if (color) {
-            let next = prev | mask;
+            let next = prev | twoToThe[xMod16];
         } else {
-            let next = prev & ~mask;
+            let next = prev & ~twoToThe[xMod16];
         }
         do Memory.poke(addr, next);
         return;
@@ -138,9 +140,9 @@ class Screen {
 
     function void drawHLine(int x1, int x2, int y) {
         var int tmp;
-        var int addrStart, addrEnd, addr;
-        var int j, xMod16, pStart, pEnd;
-        var int line;
+        var int addrStart, addrEnd;
+        var int x1Mod16, x2Mod16;
+        var int line, addr;
         if (x1 > x2) {
             let tmp = x1;
             let x1 = x2;
@@ -153,41 +155,29 @@ class Screen {
         }
         */
         let addrStart = Screen.pixel2Addr(x1, y);
-        let xMod16 = x1 - (16 * (x1 / 16));
-        let pStart = 1;
-        let j = 0;
-        while (j < xMod16) {
-            let pStart = pStart + pStart;
-            let j = j + 1;
-        }
+        let x1Mod16 = x1 - (16 * (x1 / 16));
         let addrEnd = Screen.pixel2Addr(x2, y);
-        let xMod16 = x2 - (16 * (x2 / 16));
-        let pEnd = 1;
-        let j = 0;
-        while (j < xMod16) {
-            let pEnd = pEnd + pEnd;
-            let j = j + 1;
-        }
+        let x2Mod16 = x2 - (16 * (x2 / 16));
         if (addrStart = addrEnd) {
             if (color) {
-                let line = Memory.peek(addrStart) | (~(pStart - 1) & (pEnd | (pEnd - 1)));
+                let line = Memory.peek(addrStart) | (~(twoToThe[x1Mod16] - 1) & (twoToThe[x2Mod16] | (twoToThe[x2Mod16] - 1)));
             } else {
-                let line = Memory.peek(addrStart) & ((pStart - 1) & (~pEnd & ~(pEnd - 1)));
+                let line = Memory.peek(addrStart) & ((twoToThe[x1Mod16] - 1) | ~(twoToThe[x2Mod16] | (twoToThe[x2Mod16] - 1)));
             }
             do Memory.poke(addrStart, line);
             return;
         }        
 
         if (color) {
-            let line = Memory.peek(addrStart) | ~(pStart - 1);
+            let line = Memory.peek(addrStart) | ~(twoToThe[x1Mod16] - 1);
         } else {
-            let line = Memory.peek(addrStart) & (pStart - 1);
+            let line = Memory.peek(addrStart) & (twoToThe[x1Mod16] - 1);
         }
         do Memory.poke(addrStart, line);
         if (color) {
-            let line = Memory.peek(addrEnd) | (pEnd | (pEnd - 1));
+            let line = Memory.peek(addrEnd) | (twoToThe[x2Mod16] | (twoToThe[x2Mod16] - 1));
         } else {
-            let line = Memory.peek(addrEnd) & (~pEnd & ~(pEnd - 1));
+            let line = Memory.peek(addrEnd) & ~(twoToThe[x2Mod16] | (twoToThe[x2Mod16] - 1));
         }
         do Memory.poke(addrEnd, line);
         let addr = addrStart + 1;
