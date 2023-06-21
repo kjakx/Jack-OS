@@ -71,7 +71,7 @@ class Math {
         let j = 1;
         let shiftedY = Array.new(16);
         let shiftedY[0] = y_abs;
-        while ((shiftedY[j-1] + shiftedY[j-1] > 0) & (shiftedY[j-1] + shiftedY[j-1] < x_abs)) {
+        while ((shiftedY[j-1] + shiftedY[j-1] > 0) & ~(shiftedY[j-1] + shiftedY[j-1] > x_abs)) {
             let shiftedY[j] = shiftedY[j-1] + shiftedY[j-1];
             let j = j + 1;
         }
@@ -86,6 +86,7 @@ class Math {
                 let q = q + q;
             }
         }
+        do shiftedY.dispose();
         if ((x > 0) = (y > 0)) {
             return q;
         } else {
