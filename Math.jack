@@ -9,6 +9,7 @@
  */
 class Math {
     static Array twoToThe;
+    static Array shiftedY;
 
     /** Initializes the library. */
     function void init() {
@@ -20,6 +21,7 @@ class Math {
             let twoToThe[i] = twoToThe[i-1] + twoToThe[i-1];
             let i = i + 1;
         }
+        let shiftedY = Array.new(16);
         return;
     }
 
@@ -59,7 +61,6 @@ class Math {
      */
     function int divide(int x, int y) {
         var int x_abs, y_abs, j, q, r;
-        var Array shiftedY;
         if (y = 0) {
             do Sys.error(3);
         }
@@ -69,7 +70,6 @@ class Math {
             return 0;
         }
         let j = 1;
-        let shiftedY = Array.new(16);
         let shiftedY[0] = y_abs;
         while ((shiftedY[j-1] + shiftedY[j-1] > 0) & ~(shiftedY[j-1] + shiftedY[j-1] > x_abs)) {
             let shiftedY[j] = shiftedY[j-1] + shiftedY[j-1];
@@ -86,7 +86,6 @@ class Math {
                 let q = q + q;
             }
         }
-        do shiftedY.dispose();
         if ((x > 0) = (y > 0)) {
             return q;
         } else {
