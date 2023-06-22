@@ -13,7 +13,7 @@ class Memory {
     function void init() {
         var Array ram;
         let ram = 0;
-        let ram[2048] = 16384 - 2048 - 1; // heapLength
+        let ram[2048] = 14334; // heapLength = (heapEndAddr+1) - (heapStartAddr) - (freeListAreaSize)
         let ram[2049] = null; // next
         return;
     }
@@ -34,10 +34,11 @@ class Memory {
     }
 
     function int findFirstFit(Array segment, int reqSize) {
-        var int block;
+        var int block, nextSize;
         if (segment[0] > reqSize) {
-            let block = segment + segment[0] - reqSize + 1;
-            let segment[0] = segment[0] - reqSize;
+            let nextSize = segment[0] - reqSize;
+            let block = segment + nextSize + 1;
+            let segment[0] = nextSize;
         } else {
             if (segment[1] = null) {
                 do Sys.error(6);
